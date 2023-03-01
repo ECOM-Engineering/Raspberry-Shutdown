@@ -1,48 +1,6 @@
 #!/usr/bin/env python3
 # pylint: disable=missing-docstring
 
-#!/usr/bin/env python3
-
-# MIT License see https://opensource.org/licenses/MIT
-# copyright (c) 2021 Klaus Mezger, ECOM Engineering
-
-''' Simple python 3.x shutdown control using switch and LED
-
-This script allows a controlled shutdown preventing SD-Card damage
-Switch:
-    press >3 seconds:  secure system shutdown is triggered
-    double click:      secure shutdown and restart
-    press >6 seconds:  optional supply shutdown with external hardware
-LED:
-    turns on, as soon as raspberry is ready
-    turns off, as soon as controlled power down is compleded
-
-For help use commandline "python3 button_LED.py -h"
-For auto start: 
-sudo nano /lib/systemd/system/shutdown.service
-
-
-    
-
-Hardware component used:
-    * 330Ohm resistor
-    * Low current (green) LED
-    * SPST switch 
-
-Connections:
-    * Raspi output port --> LED(anode)-LED(cathode) --> resistor --> GND
-    * Raspi input Port --> switch --> GND
-    * [optional, if not programmed in config.txt) Raspi input Port --> 10kOhm resistor to 3.3V]
-
-Prerequisites, if using Raspberry internal pullup for switch:
-    * Enable internal pullup on input port on bottom in file /boot/config.txt
-        #set GPIO20 as input with pullup high
-        gpio=20=ip,pu 
-    
-'''
-
-
-
 import sys
 import os
 from datetime import timedelta, datetime
@@ -51,52 +9,26 @@ from gpiod import chip, line_request, line_event
 
 # todo: use new BIAS instead of pullup defined in /boot/config.txt
 
-def getArgs():
-    '''Read arguments from command line.'''
-
-    ledDefault = 21
-    switchDefault = 20
-    powerDefault = 0  # standard GPIO 26
-
-    parser = argparse.ArgumentParser(description="controlled raspberry shutdown service")
-
-    #sys.argv = ["-f"]    # workaround https://stackoverflow.com/a/30662356                              
-    parser.add_argument("-l","--ledPort", type=int, default=ledDefault, metavar='',
-                        help='LED output bcm port default = ' + str(ledDefault))
-    parser.add_argument("-s", "--switchPort", type=int, default=switchDefault, metavar='',
-                        help='Switch control input bcm port default = ' + str(switchDefault))
-    parser.add_argument("-p", "--powerPort", type=int, default=powerDefault, metavar='',
-                        help='Optional bcm port for external power timer')
-
-    args=parser.parse_args()
-    buttonHandler(args)
-    
-
 
 #key press time in sec
 C_SHORT = 0.2
 C_LONG = 3         #shutdown Raspberry off
 C_SUPERLONG = 5    #shutdown & power off: needs external hardware
 
-def buttonHandler(ports):
+def buttonHandler():
     # defaults
     BUTTON_CHIP = 0
     BUTTON_EDGE = line_request.EVENT_BOTH_EDGES
-    # BUTTON_LINE_OFFSET = 20
-    # LED_LINE_OFFSET = 21
-    # POWER_PORT_OFFSET = 0  # default not used
-
+    BUTTON_LINE_OFFSET = 20
+    LED_LINE_OFFSET = 21
+    POWER_PORT_OFFSET = 0  # default not used
 
     #try:
-    # if 0 == 0:
-    #     if len(sys.argv) > 2:
-    #         LED_LINE_OFFSET = int(sys.argv[1])
-    #         BUTTON_LINE_OFFSET = int(sys.argv[2])
-    #         POWER_PORT_OFFSET = int(sys.argv[3])
-    
-    LED_LINE_OFFSET = ports.ledPort
-    BUTTON_LINE_OFFSET = ports.switchPort
-    POWER_PORT_OFFSET = ports.powerPort
+    if 0 == 0:
+        if len(sys.argv) > 2:
+            LED_LINE_OFFSET = int(sys.argv[1])
+            BUTTON_LINE_OFFSET = int(sys.argv[2])
+            POWER_PORT_OFFSET = int(sys.argv[3])
 
     c = chip(BUTTON_CHIP)
     button = c.get_line(BUTTON_LINE_OFFSET)
@@ -197,8 +129,8 @@ def buttonHandler(ports):
                         keyAction = "SHORT PRESS not used"  
                         print(keyAction)
 
-        #            print("keyAction =", keyAction)       
-        #            print("pulseTime =", pulseTime,"pauseTime =", pauseTime)
+                    print("keyAction =", keyAction)       
+                    print("pulseTime =", pulseTime,"pauseTime =", pauseTime)
         #               keyAction = "NO_KEY"
         except KeyboardInterrupt: 
             led.set_value(0)
@@ -207,9 +139,7 @@ def buttonHandler(ports):
             break
 
 if __name__ == '__main__':
-    import argparse
-    getArgs()
-
+    buttonHandler()
     
  
  
