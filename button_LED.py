@@ -18,11 +18,31 @@ LED:
     turns off, as soon as controlled power down is compleded
 
 For help use commandline "python3 button_LED.py -h"
+
 For auto start: 
-sudo nano /lib/systemd/system/shutdown.service
+1. edit a .service file
+    /lib/systemd/system $ sudo nano shutdown.service
+    [Unit]
+    Description=shutdown using button and LED with new GPIOD
+    After=network.target
 
+    [Service]
+    ExecStart=/usr/bin/python3 button_LED.py
+    WorkingDirectory=/home/pi/Projects/Raspberry-Shutdown
+    StandardOutput=inherit
+    StandardError=inherit
+    Type=simple
 
-    
+    [Install]
+    WantedBy=network.target
+2. let the system recognize this service
+    sudo systemctl daemon-reload
+3. Test the service
+    sudo systemctl start shutdown.service
+    sudo systemctl stop shutdown.service
+4. make the servie active on boot
+    sudo systemctl enable shutdown.service
+   
 
 Hardware component used:
     * 330Ohm resistor
@@ -43,13 +63,15 @@ Prerequisites, if using Raspberry internal pullup for switch:
 
 
 
-import sys
+mport sys
 import os
 from datetime import timedelta, datetime
 import time
 from gpiod import chip, line_request, line_event
 
 # todo: use new BIAS instead of pullup defined in /boot/config.txt
+
+
 
 def getArgs():
     '''Read arguments from command line.'''
@@ -205,6 +227,8 @@ def buttonHandler(ports):
             c.reset()
             print('  ciao---')
             break
+
+
 
 if __name__ == '__main__':
     import argparse
