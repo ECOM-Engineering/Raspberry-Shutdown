@@ -62,8 +62,6 @@ Prerequisites, if using Raspberry internal pullup for switch:
 '''
 
 
-
-mport sys
 import os
 from datetime import timedelta, datetime
 import time
