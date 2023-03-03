@@ -102,18 +102,8 @@ def buttonHandler(ports):
     # defaults
     BUTTON_CHIP = 0
     BUTTON_EDGE = line_request.EVENT_BOTH_EDGES
-    # BUTTON_LINE_OFFSET = 20
-    # LED_LINE_OFFSET = 21
-    # POWER_PORT_OFFSET = 0  # default not used
 
-
-    #try:
-    # if 0 == 0:
-    #     if len(sys.argv) > 2:
-    #         LED_LINE_OFFSET = int(sys.argv[1])
-    #         BUTTON_LINE_OFFSET = int(sys.argv[2])
-    #         POWER_PORT_OFFSET = int(sys.argv[3])
-    
+  
     LED_LINE_OFFSET = ports.ledPort
     BUTTON_LINE_OFFSET = ports.switchPort
     POWER_PORT_OFFSET = ports.powerPort
@@ -155,6 +145,7 @@ def buttonHandler(ports):
                 # event_read() is blocking function.
                 event = button.event_read()
                 newStamp = event.timestamp
+                # mechanisms against bouncing. GPIOD is extremely fast.
                 if oldStamp == 0:        # first event?
                     oldStamp = newStamp  # make oldStamp a timedelta type
                 else:
@@ -176,7 +167,7 @@ def buttonHandler(ports):
                         key_press = False
 
 
-            else:  # 0.5 sec clock
+            else:  # 0.5 sec clock: event handler
                 if line_level == 0:  # key is pressed
                     if LED_LINE_OFFSET > 0:
                         blinkCount += 1
