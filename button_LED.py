@@ -82,7 +82,7 @@ def getArgs():
 
     #sys.argv = ["-f"]    # workaround https://stackoverflow.com/a/30662356                              
     parser.add_argument("-l","--ledPort", type=int, default=ledDefault, metavar='',
-                        help='LED output bcm port default = ' + str(ledDefault))
+                        help='LED output bcm port default = ' + str(ledDefault) + ' 0 = no LED')
     parser.add_argument("-s", "--switchPort", type=int, default=switchDefault, metavar='',
                         help='Switch control input bcm port default = ' + str(switchDefault))
     parser.add_argument("-p", "--powerPort", type=int, default=powerDefault, metavar='',
@@ -119,21 +119,20 @@ def buttonHandler(ports):
     POWER_PORT_OFFSET = ports.powerPort
 
     c = chip(BUTTON_CHIP)
-    button = c.get_line(BUTTON_LINE_OFFSET)
-    led = c.get_line(LED_LINE_OFFSET)
-
     config = line_request()
-    config.consumer = "LED"
-    config.request_type = line_request.DIRECTION_OUTPUT
-    config.flags = line_request.FLAG_BIAS_PULL_UP
-
-    led.request(config)
-    led.set_value(1)
-
+    button = c.get_line(BUTTON_LINE_OFFSET)
     config.consumer = "Button"
     config.request_type = BUTTON_EDGE
-
     button.request(config)
+
+    if LED_LINE_OFFSET > 0:
+        led = c.get_line(LED_LINE_OFFSET)
+        config.consumer = "LED"
+        config.request_type = line_request.DIRECTION_OUTPUT
+        config.flags = line_request.FLAG_BIAS_PULL_UP
+        led.request(config)
+        led.set_value(1)
+    
 
     startTime = 0.0
     endTime = 0.0
@@ -178,25 +177,29 @@ def buttonHandler(ports):
 
 
             else:  # 0.5 sec clock
-                if line_level == 0:
-                    blinkCount += 1
-                    if blinkCount % 2 == 0:
-                        print("BlinkCount =", blinkCount)
-                        led.set_value(1)
-                    else:
-                        led.set_value(0)
+                if line_level == 0:  # key is pressed
+                    if LED_LINE_OFFSET > 0:
+                        blinkCount += 1
+                        if blinkCount % 2 == 0:
+                            print("BlinkCount =", blinkCount)
+                            led.set_value(1)
+                        else:
+                            led.set_value(0)
                 else:  # key is released
-                    led.set_value(1)
+                    if LED_LINE_OFFSET > 0: 
+                        led.set_value(1)
                     blinkCount = 0 
                     keyAction = "NO_KEY"
                     if pulseTime > 0 and pulseTime < 0.2: 
                         if checkDoublePress == False:
                             checkDoublePress = True
                         else:
-                            if pauseTime < 0.5: #this is a double click
+                            if pauseTime < 0.5 and pauseTime > 0:  # this is a double click
                                 keyAction = "DOUBLE_PRESS restart"
                                 print(keyAction)
                                 os.system("sudo shutdown -r now")
+                            else:
+                                checkDoublePress = False
                     else:          
                         checkDoublePress = False
                         
@@ -215,13 +218,12 @@ def buttonHandler(ports):
 
                     elif pulseTime > C_SHORT:
                         keyAction = "SHORT PRESS not used"  
-                        print(keyAction)
+                        # print(keyAction)
+                        
 
-        #            print("keyAction =", keyAction)       
-        #            print("pulseTime =", pulseTime,"pauseTime =", pauseTime)
-        #               keyAction = "NO_KEY"
         except KeyboardInterrupt: 
-            led.set_value(0)
+            if LED_LINE_OFFSET > 0: 
+                led.set_value(0)
             c.reset()
             print('  ciao---')
             break
