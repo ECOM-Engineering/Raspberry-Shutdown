@@ -115,7 +115,7 @@ def buttonHandler(ports):
     config.request_type = BUTTON_EDGE
     button.request(config)
 
-    if LED_LINE_OFFSET > 0:
+    if LED_LINE_OFFSET > 0:  # handle only if LED is present
         led = c.get_line(LED_LINE_OFFSET)
         config.consumer = "LED"
         config.request_type = line_request.DIRECTION_OUTPUT
@@ -152,7 +152,7 @@ def buttonHandler(ports):
                     timeDiff = (newStamp - oldStamp).total_seconds()    
                     oldStamp = event.timestamp
 
-                line_level = button.get_value()
+                # line_level = button.get_value()
 
                 if event.event_type == line_event.FALLING_EDGE: 
                     print("falling: ", event.timestamp)   # key pressed!
@@ -168,6 +168,7 @@ def buttonHandler(ports):
 
 
             else:  # 0.5 sec clock: event handler
+                line_level = button.get_value()
                 if line_level == 0:  # key is pressed
                     if LED_LINE_OFFSET > 0:
                         blinkCount += 1
@@ -209,7 +210,7 @@ def buttonHandler(ports):
 
                     elif pulseTime > C_SHORT:
                         keyAction = "SHORT PRESS not used"  
-                        # print(keyAction)
+                        print(keyAction)
                         
 
         except KeyboardInterrupt: 
