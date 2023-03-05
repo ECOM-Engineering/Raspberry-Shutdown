@@ -1,7 +1,7 @@
 
 # Project Raspberry-Shutdown
 
-The **Raspberry-Shutdown Project** describes a very simple system in order to shut down Raspberry Pi safely. It consists of a Python 3.x script *s_shut.py*, a simple schematic and this description.  
+The **Raspberry-Shutdown Project** describes a very simple system in order to shut down Raspberry Pi safely. It consists of a Python 3.x script *button_LED.py*, a simple schematic and this description.  
 This project is tested in Raspberry models 3, 3B, 4B, zero-wh under raspbian V10 and above.  
 The python script uses the awesome [libgpiod](https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/about/) library 
 
@@ -23,7 +23,7 @@ As soon as critical storage operations are completed, LED goes OFF.
 System shuts down and restarts.  
 Linux command *'shutdown -r now'*  will be executed by the script **button_LED.py**.
 
-**Switch pressed > 6 seconds** [optional]  
+**Switch pressed > 56 seconds** [optional]  
 System shuts down and activates a selectable port until no more SD card access occur. This signal may be used in order to completely power down Raspberry by switching off  the external power supply .
 
 **Restart after shut down**  
@@ -31,10 +31,10 @@ This is only achievable by external power off and on again.
 (A much more convenient solution is using the "UPS-2" project
 
 **Project Components**
-- The python script **butto_LED.py**
+- The python script **button_LED.py**
 - A  push button switch
 - A high efficiency LED
-- 1 or 2 resistors
+- some wires
 
 ## More information
 See [user-guide.md](doc/user-guide.md)
