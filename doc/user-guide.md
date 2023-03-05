@@ -42,16 +42,14 @@ This is only achievable by external power off and on again. (A much more conveni
 This summary is intended for experienced users.
 
 1. Prepare hardware, see [Fig. 1](#Fig. 1)
-2. Download script button_LED.py   
-    `wget https://raw.githubusercontent.com/ECOM-Klaus/Raspberry-Shutdown/master/button_LED.py`  
+2. Clone  shutdown project  
+    `git clone https://github.com/ECOM-Klaus/Raspberry-Shutdown.git`
 3. Install libgpiod library  
     `sudo apt install python3-libgpiod`
-4. Activate pullup resistor in file /boot/config.txt   
-    `#set GPIO20 as input with pullup high`  
-    `gpio=20=ip,pu`  
-5. Autostart button_LED.py script in file /etc/rc.local  
-    `python3 /home/pi/<*your project location*>/button_LED.py &`
-    	
+ 5. Autostart button_LED.py script with systemd  
+ See chapter `Autostart`
+      
+      	
 
 ## Software Installation
 
@@ -60,20 +58,11 @@ This summary is intended for experienced users.
     This project works with all OS versions.
     	
 
-2. Edit file config.txt:  
-    The used [gpiod](https://github.com/warthog618/gpiod) library has no pullup feature. (will possibly come with Linux kernel >=V5.1). We have to set pullup in file config.txt. 
-    This SD card file is visible on the PC or MAC directly in the root, or on Raspberry in the /boot directory (use sudo <editor>).  
-
-   `#set GPIO20 as input with pullup high`  
-   `gpio=20=ip,pu`
-       
-
-3. Install required library on Raspberry:  
+2. Install required library on Raspberry:  
     `sudo apt install python3-libgpiod`
 
-4. Download shutdown script or clone project
+3. Download shutdown script or clone project
     Change to your project directory and download the Python3 project script  
-    `wget https://raw.githubusercontent.com/ECOM-Klaus/Raspberry-Shutdown/master/button_LED.py`  
 
    OR execute from your project directory   
     `git clone https://github.com/ECOM-Klaus/Raspberry-Shutdown.git`
@@ -121,7 +110,7 @@ Please test first with default ports. You may change it later by command line pa
     --> Raspberry should shut down and Led goes off  after SD card access is finished.  
  
 
-##   Autostart
+## Autostart
 
 **Before implementing autostart, perform the command line  tests in the previous chapter.** 
 
