@@ -4,7 +4,7 @@
 
 The  [Raspberry-Shutdown](https://github.com/ECOM-Engineering/Raspberry-Shutdown) project describes a very simple system in order to shut down Raspberry Pi safely. It consists of a Python 3.x script *button_LED.py*, a simple schematic and this description.
  This project is tested in Raspberry models 3, 3B, 4B, zero-wh under raspbian V10, Raspberry OS (Debian) and above.
- The python script uses the awesome [libgpiod](https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/about/) library,
+ The python script uses the awesome [libgpiod](https://pypi.org/project/gpiod/) library.
 
 ## Background
 
@@ -43,11 +43,11 @@ This summary is intended for experienced users.
 
 1. Prepare hardware, see [Fig. 1](#Fig. 1)
 2. Clone  shutdown project  
-    `git clone https://github.com/ECOM-Klaus/Raspberry-Shutdown.git`
+    `git clone https://github.com/ECOM-Engineering/Raspberry-Shutdown`
 3. Install libgpiod library  
-    `sudo apt install python3-libgpiod`
+    `python3 -m pip install -U --user pip gpiod`
  5. Autostart button_LED.py script with systemd  
- See chapter `Autostart`
+ See chapter [Autostart](#autostart)
       
       	
 
@@ -59,13 +59,13 @@ This summary is intended for experienced users.
     	
 
 2. Install required library on Raspberry:  
-    `sudo apt install python3-libgpiod`
+    `python3 -m pip install -U --user pip gpiod`
 
 3. Download shutdown script or clone project
     Change to your project directory and download the Python3 project script  
 
    OR execute from your project directory   
-    `git clone https://github.com/ECOM-Klaus/Raspberry-Shutdown.git`
+    `git clone https://github.com/ECOM-Engineering/Raspberry-Shutdown`
 
 5. Basic test  without hardware
     Change to your project directory and execute   
