@@ -90,11 +90,10 @@ This summary is intended for experienced users.
 
 ​	 `optional arguments:`  
   `-h, --help          show this help message and exit`  
-  `-l , --ledPort      LED output bcm port default = 21`  
+  `-l , --ledPort      LED output bcm port default = 21 0 = no LED`  
   `-s , --switchPort   Switch control input bcm port default = 20`  
   `-p , --powerPort    Optional bcm port for external power time`r  
 
-##    
 
 ## Hardware Installation
 
@@ -106,9 +105,6 @@ Required material: (example types)
 ![Shutdown Connections](shutdown-switch.png)
 
    **Fig. 1**: Wiring Diagram with default ports.
-
-
-
 
 
 ## Test
@@ -131,20 +127,25 @@ Please test first with default ports. You may change it later by command line pa
 
 Normally you would start this script automatically during power-up. There are different methods to achieve this, but start should be independent of the start of a graphical desktop. So it is usable also on minimum systems suchlike Raspberry zero. Autostart using the **rc.local is deprecated** and in new Raspberry OS (Debian) with no effect! Instead we **use a systemd service** [link to more info](https://learn.sparkfun.com/tutorials/how-to-run-a-raspberry-pi-program-on-startup/method-3-systemd)
 
-1. Edit the example file [shutdown.service](shutdown.service): 
-   sudo nano shutdown.service
+1. Edit the example file [shutdown.service](shutdown.service):   
+   `sudo nano shutdown.service`  
    Adapt the path to your button_LED.py script:
    WorkingDirectory= **path to your script**
 
-3. Save this file to :  
-    ^o ^x
-4. Make the script executable:  
-    `sudo chmod +x rc.local`
-5. Now check if it works.   
-    `sudo shutdown -r now`
-6. --> Computer shuts down and restarts. LED should turn on after booting through first runlevels (wait seconds until minutes depending on model and configuration).
-7. Test switch functions: see chapter [Functionality](#3.Functionality|outline)
-
+2. Save this file to :  
+   `/lib/systemd/system/shutdown.service`
+3. Tell systemd to recognize our service:  **(must always be executed after changes in script)**  
+   `sudo systemctl daemon-reload`
+4. Tell systemd to start the service on boot:  
+`sudo systemctl enable shutdown.service`
+5. Shuddown and reboot your raspberry. **LED should go ON after boot!**
+6. Test switch functions: see chapter [Functionality](#3.Functionality|outline)
+7. Some hints in case of autostart trouble:  
+- `sudo systemctl stop shutdown.service`
+- sudo systemctl disable shuddown service`` (service will not start on boot)
+- have a lok on `sudo systemctl status shutdown.service`
+- Test the script manually
+- Re-enable the service `sudo systemctl enable shutdown.service`
 
 
 ## Using other I/O ports
@@ -153,8 +154,6 @@ Standard ports are BCM20 for LED and BCM21 for switch. External power off signal
 
 #### Other port for switch
 
-Add a line in file /etc/config.txt:  
-`gpio=<port>=ip,pu`
 Use parameter **-s**:   
 `python3 button_LED.py -s<led port>`
 
@@ -171,7 +170,6 @@ Use parameter **-p**:
 `python3 button_LED.py -p<supply port>`
 
  
-
 ##   Trouble Shooting
 
 - LED does not work when executing button_LED.py  
@@ -180,9 +178,6 @@ Use parameter **-p**:
    --> if error message concerning 'gpiod', re-install		`sudo apt install python3-libgpiod`  
 - Switch is not working	 
    --> check hardware connection  
-   --> is pullup for switch port set in file /boot/config.txt?  
-   -->  if using other port than BCM20 call script with parameter  `python3 button_LED -s<port>`
-
 
 
 Copyright (C) 2023 Klaus Mezger under [MIT license](https://opensource.org/licenses/MIT)
