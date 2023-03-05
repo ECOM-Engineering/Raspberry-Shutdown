@@ -129,16 +129,14 @@ Please test first with default ports. You may change it later by command line pa
 
 **Before implementing autostart, perform the command line  tests in the previous chapter.** 
 
-Normally you would start this script automatically during power-up. There are different methods to achieve this, but start should be independent of the start of a graphical desktop. So it is usable also on minimum systems suchlike Raspberry zero. Autostart using the **rc.local is deprecated** and in new Raspberry OS (Debian) with no effect! Instead we **use a systemd service*
+Normally you would start this script automatically during power-up. There are different methods to achieve this, but start should be independent of the start of a graphical desktop. So it is usable also on minimum systems suchlike Raspberry zero. Autostart using the **rc.local is deprecated** and in new Raspberry OS (Debian) with no effect! Instead we **use a systemd service** [link to more info](https://learn.sparkfun.com/tutorials/how-to-run-a-raspberry-pi-program-on-startup/method-3-systemd)
 
-1. Edit a new unit file 'shutdown.service': 
-   `sudo nano /lib/systemd/system/shutdown.service`
-   
-2. Add at the bottom of file:  
-    --> normally, the file is empty or there are some comment lines. Add at the bottom of file  
-    `python3 /home/pi/<*your project location*>/button_LED.py &`  
-    `exit 0`  
-3. Save this file and exit nano editor:  
+1. Edit the example file [shutdown.service](shutdown.service): 
+   sudo nano shutdown.service
+   Adapt the path to your button_LED.py script:
+   WorkingDirectory= **path to your script**
+
+3. Save this file to :  
     ^o ^x
 4. Make the script executable:  
     `sudo chmod +x rc.local`

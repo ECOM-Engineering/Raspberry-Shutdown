@@ -1,16 +1,10 @@
 [Unit]
 Description=shutdown using button and LED with new GPIOD
-After=network.target
+After=multi-user.target
 
 [Service]
 ExecStart=/usr/bin/python3 button_LED.py
 WorkingDirectory=/home/pi/Projects/Raspberry-Shutdown
 
-# StandardOutput=inherit
-# StandardError=inherit
-# Type=simple
-# Restart=oneshot
-#User=pi
-
 [Install]
-WantedBy=network.target
+WantedBy=multi-user.target
