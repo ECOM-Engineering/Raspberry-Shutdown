@@ -113,13 +113,14 @@ def buttonHandler(ports):
     button = c.get_line(BUTTON_LINE_OFFSET)
     config.consumer = "Button"
     config.request_type = BUTTON_EDGE
+    config.flags = line_request.FLAG_BIAS_PULL_UP
     button.request(config)
 
     if LED_LINE_OFFSET > 0:  # handle only if LED is present
         led = c.get_line(LED_LINE_OFFSET)
         config.consumer = "LED"
         config.request_type = line_request.DIRECTION_OUTPUT
-        config.flags = line_request.FLAG_BIAS_PULL_UP
+    #    config.flags = line_request.FLAG_BIAS_PULL_UP
         led.request(config)
         led.set_value(1)
     
