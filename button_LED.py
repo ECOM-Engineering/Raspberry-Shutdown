@@ -24,17 +24,14 @@ For auto start:
     /lib/systemd/system $ sudo nano shutdown.service
     [Unit]
     Description=shutdown using button and LED with new GPIOD
-    After=network.target
+    After=multi-user.target
 
     [Service]
     ExecStart=/usr/bin/python3 button_LED.py
     WorkingDirectory=/home/pi/Projects/Raspberry-Shutdown
-    StandardOutput=inherit
-    StandardError=inherit
-    Type=simple
-
+ 
     [Install]
-    WantedBy=network.target
+    WantedBy=multi-user.target
 2. let the system recognize this service
     sudo systemctl daemon-reload
 3. Test the service
@@ -52,13 +49,8 @@ Hardware component used:
 Connections:
     * Raspi output port --> LED(anode)-LED(cathode) --> resistor --> GND
     * Raspi input Port --> switch --> GND
-    * [optional, if not programmed in config.txt) Raspi input Port --> 10kOhm resistor to 3.3V]
-
-Prerequisites, if using Raspberry internal pullup for switch:
-    * Enable internal pullup on input port on bottom in file /boot/config.txt
-        #set GPIO20 as input with pullup high
-        gpio=20=ip,pu 
     
+  
 '''
 
 
@@ -66,8 +58,6 @@ import os
 from datetime import timedelta, datetime
 import time
 from gpiod import chip, line_request, line_event
-
-# todo: use new BIAS instead of pullup defined in /boot/config.txt
 
 
 
